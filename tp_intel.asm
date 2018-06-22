@@ -22,8 +22,6 @@ segment datos data
         saltoLinea  db      10,13,"$"
         msgError1   db      "ERROR: Ingreso un conjunto invalido$"
         msgError2   db      "ERROR: Ingreso un elemento invalido$"
-        msgError3   db      "ERROR: Conjunto fuera de rango$"
-        msgError4   db      "ERROR: Ingreo una cantidad de conjuntos inválida$"
         msgNoPerte  db      "RESULTADO: El elemento no pertenece al conjunto$"
         msgPerte    db      "RESULTADO: El elemento pertenece al conjunto$"
         msgNoIgual  db      "RESULTADO: Los conjuntos no son iguales$"
@@ -62,7 +60,6 @@ segment codigo code
         mov     ax,pila
         mov     ss,ax
         ;Se cargan los conjuntos antes del menu
-cantidadConj:
         lea     dx,[msgInicio]
         call    imprMsg
         lea     dx,[saltoLinea]
@@ -79,15 +76,8 @@ cantidadConj:
         cmp     al,6 
         jg      salir
         cmp     al,1
-        jl      cantidadConj
+        jl      salir
         jmp     cargarSet   
-errorCantidad:
-        mov     dx,[saltoLinea]
-        call    imprMsg
-        mov     dx,[msgError4]
-        call    imprMsg
-        xor     al,al
-        jmp cantidadConj
 validar:
         mov     cx,si ;copio a CX el largo de la cadena a validar
 loopVal:
@@ -170,10 +160,6 @@ cargarConjunto:
         je      carga5
         cmp     al,6
         je      carga6
-        mov     dx,[saltoLinea]
-        call    imprMsg
-        mov     dx,[msgError3]
-        call    imprMsg
         jmp     menu 
 retConj:
         ret
