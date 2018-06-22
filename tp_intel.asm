@@ -22,6 +22,8 @@ segment datos data
         saltoLinea  db      10,13,"$"
         msgError1   db      "ERROR: Ingreso un conjunto invalido$"
         msgError2   db      "ERROR: Ingreso un elemento invalido$"
+        msgError3   db      "ERROR: Conjunto fuera de rango$"
+        msgError4   db      "ERROR: Ingreso una cantidad de conjuntos invalida$"
         msgNoPerte  db      "RESULTADO: El elemento no pertenece al conjunto$"
         msgPerte    db      "RESULTADO: El elemento pertenece al conjunto$"
         msgNoIgual  db      "RESULTADO: Los conjuntos no son iguales$"
@@ -60,6 +62,9 @@ segment codigo code
         mov     ax,pila
         mov     ss,ax
         ;Se cargan los conjuntos antes del menu
+cantidadConj:
+        lea     dx,[saltoLinea]
+        call    imprMsg
         lea     dx,[msgInicio]
         call    imprMsg
         lea     dx,[saltoLinea]
@@ -74,10 +79,23 @@ segment codigo code
         call    imprMsg
         mov     al,[cantSet] ;valido que la cantidad de conjuntos tenga sentido
         cmp     al,6 
-        jg      salir
+        jg      errorCantidad
         cmp     al,1
-        jl      salir
+        jl      errorCantidad
         jmp     cargarSet   
+errorCantidad:
+        lea     dx,[saltoLinea]
+        call    imprMsg
+        lea     dx,[msgError4]
+        call    imprMsg
+        lea     dx,[saltoLinea]
+        call    imprMsg
+        xor     al,al
+        jmp cantidadConj
+imprMsg:
+        mov     ah,9
+        int     21h
+        ret 
 validar:
         mov     cx,si ;copio a CX el largo de la cadena a validar
 loopVal:
@@ -160,6 +178,10 @@ cargarConjunto:
         je      carga5
         cmp     al,6
         je      carga6
+        lea     dx,[saltoLinea]
+        call    imprMsg
+        lea     dx,[msgError3]
+        call    imprMsg
         jmp     menu 
 retConj:
         ret
@@ -402,10 +424,6 @@ siIncluido:
         lea     dx,[msgIncluido]
         call    imprMsg
         jmp     menu
-imprMsg:
-        mov     ah,9
-        int     21h
-        ret 
 salir:
         mov ax,4c00h
         int 21h
